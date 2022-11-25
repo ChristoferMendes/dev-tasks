@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import {
-  Platform, View, Text, StyleSheet, TextInput, TouchableOpacity, FlatList
+  Platform, View, Text, StyleSheet, TextInput, TouchableOpacity,
 } from 'react-native'
 import TaskList from '../../components/TaskList';
+import { useTaskContext, } from '../../store/TaskProvider';
 
 export interface Task {
   id: string;
@@ -11,7 +12,7 @@ export interface Task {
 
 export default function Home() {
   const [newTask, setNewTask] = useState('');
-  const [tasks, setTasks] = useState<Task[]>([]);
+  const { addTask } = useTaskContext();
 
   const handleAddNewTask = () => {
     const data = {
@@ -19,7 +20,8 @@ export default function Home() {
       title: newTask != '' ? newTask : 'Task empty'
     }
 
-    setTasks(prev => [...prev, data])
+    addTask(data)
+    setNewTask('')
   }
 
   return (
@@ -30,12 +32,13 @@ export default function Home() {
         style={styles.input}
         placeholder={'New Task...'}
         placeholderTextColor={'#555'}
+        value={newTask}
       />
       <TouchableOpacity activeOpacity={0.7} style={styles.button} onPress={handleAddNewTask}>
         <Text style={styles.buttonText}>Add</Text>
       </TouchableOpacity>
       <Text style={styles.titleTasks}>My tasks</Text>
-      <TaskList tasks={tasks}/>
+      <TaskList />
     </View>
   )
 }

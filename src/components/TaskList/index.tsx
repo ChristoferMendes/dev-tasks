@@ -1,11 +1,26 @@
-import { FlatList, StyleSheet, Text, TouchableOpacity } from "react-native";
-import type { Task } from "../../pages/Home";
+import { Alert, FlatList, StyleSheet, Text, TouchableOpacity } from "react-native";
+import { Task } from "../../pages/Home";
+import { useTaskContext } from "../../store/TaskProvider";
 
-export default function TaskList ({ tasks }: { tasks: Task[] }) {
+export default function TaskList () {
+  const { tasks, removeTask } = useTaskContext();
+
+  const handleRemove = (item: Task) => {
+    Alert.alert('Are you sure?', `You will delete the task: ${item.title}`, [
+      {
+        text: 'cancel',
+      },
+      {
+        text: 'Delete',
+        onPress: () => removeTask(item.id),
+      }
+    ])
+  }
+  
   return (
     <>
       <FlatList data={tasks} keyExtractor={(item) => item.id} renderItem={({ item }) => (
-        <TouchableOpacity style={styles.buttonTask}>
+        <TouchableOpacity style={styles.buttonTask} onPress={() => handleRemove(item)}>
           <Text style={styles.titleTask}>{item.title}</Text>
         </TouchableOpacity>
       )} />
